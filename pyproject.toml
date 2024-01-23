@@ -1,0 +1,30 @@
+[project]
+name = "rjdown"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "盐粒 Yanli", email = "mail@yanli.one"},
+]
+dependencies = [
+    "httpx>=0.26.0",
+    "pillow>=10.2.0",
+    "pypdf>=4.0.0",
+    "msgspec>=0.18.6",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.scripts]
+download = "rjdown:main"
+
+[tool.ruff]
+target-version = "py311"
+logger-objects = ["utils.logger.logger"]
+[tool.ruff.lint]
+select = ["E", "F", "G", "B", "I", "SIM", "TID", "PL", "RUF"]
+ignore = ["E501", "RUF001"]
+[tool.ruff.lint.isort]
+known-first-party = ["rjdown"]
+[tool.ruff.pylint]
+max-args = 7
