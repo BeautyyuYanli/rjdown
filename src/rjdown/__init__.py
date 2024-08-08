@@ -8,8 +8,8 @@ from PIL import Image
 from pypdf import PdfMerger
 
 request_header = {
-    "Referer": "https://book.pep.com.cn/1441001122191/mobile/index.html", # 这个不加会返回403
-    "Cookie": "YOUR_COOKIE" # 这个不加会返回机器人验证
+    "Referer": "YourReferer", # 这个不加会返回403
+    "Cookie": "YourCookie" # 这个不加会返回机器人验证
 }
 
 
