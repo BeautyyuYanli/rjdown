@@ -1,3 +1,5 @@
+# request_per_second=5
+
 [[books]]
 name="日语必修一"
 id="1414001121221"
@@ -18,3 +20,7 @@ total_page=168
 name="日语选择性必修二"
 id="1414001128221"
 total_page=166
+
+[request_header]
+Cookie="YourCookie"
+User-Agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:128.0) Gecko/20100101 Firefox/128.0"
