@@ -1,16 +1,11 @@
 import argparse
 import io
-from typing import List
+from typing import List, Dict
 
 import httpx
-from msgspec import Struct, convert, toml
+from msgspec import Struct, convert, toml, field
 from PIL import Image
 from pypdf import PdfMerger
-
-request_header = {
-    "Referer": "YourReferer", # 这个不加会返回403
-    "Cookie": "YourCookie" # 这个不加会返回机器人验证
-}
 
 
 class BookStruct(Struct, kw_only=True, frozen=True):
@@ -21,16 +16,21 @@ class BookStruct(Struct, kw_only=True, frozen=True):
 
 class CongfigStruct(Struct, kw_only=True, frozen=True):
     books: List[BookStruct]
+    request_header: Dict[str, str] = field(default_factory=dict)
 
 
 def process_img(client: httpx.Client, id: str, page: int) -> io.BytesIO:
     img_byte = client.get(
-        f"https://book.pep.com.cn/{id}/files/mobile/{page}.jpg"
+        f"https://book.pep.com.cn/{id}/files/mobile/{page}.jpg",
+        headers={
+            **client.headers,
+            "Referer": f"https://book.pep.com.cn/{id}/mobile/index.html",
+        },
     ).content
 
-    if img_byte == b'':  # 处理空白页
-        img = Image.new('RGB', (1274, 1800), (255, 255, 255))
-        print("第"+page+"页为空白！")
+    if img_byte == b"":  # 处理空白页
+        img = Image.new("RGB", (1274, 1800), (255, 255, 255))
+        print("第" + page + "页为空白！")
     else:
         try:
             img = Image.open(io.BytesIO(img_byte))  # 检查返回的内容是否是图片格式
@@ -52,7 +52,7 @@ def main():
     with open(arge.config, "rb") as f:
         conf = convert(toml.decode(f.read()), CongfigStruct)
 
-    client = httpx.Client(headers=request_header)
+    client = httpx.Client(headers=conf.request_header)
     for book in conf.books:
         merger = PdfMerger()
         for i in range(1, book.total_page + 1):

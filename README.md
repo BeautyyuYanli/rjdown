@@ -13,13 +13,12 @@ id="1221001101121"
 total_page=120
 ```
 
-2.  打开浏览器的开发者工具，在“**网络**”标签中找到对具体某一页图片的请求，把请求头中的 `referer`, `cookie` 加到代码里。
+2.  打开浏览器的开发者工具，在“**网络**”标签中找到对具体某一页图片的请求，把请求头中的 `User-Agent`, `Cookie` 加到 [conf.toml](conf.toml) 里。
 
-```py
-request_header={ 
-    "Referer": "YourReferer", # 这个不加会返回403
-    "Cookie": "YourCookie" # 这个不加会返回机器人验证
-}
+```toml
+[request_header]
+Cookie="YourCookie"
+User-Agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:128.0) Gecko/20100101 Firefox/128.0"
 ```
 
 3. 运行如下命令，以激活虚拟环境、执行脚本。文件会下载到当前目录下的 `output` 文件夹中。
