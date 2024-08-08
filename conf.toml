@@ -1,3 +1,5 @@
+# request_per_second=5
+
 [[books]]
 name="日语必修一"
 id="1414001121221"

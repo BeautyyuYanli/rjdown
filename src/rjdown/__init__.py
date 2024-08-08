@@ -1,6 +1,7 @@
 import argparse
 import io
-from typing import List, Dict
+from typing import List, Dict, Optional
+from time import sleep
 
 import httpx
 from msgspec import Struct, convert, toml, field
@@ -15,6 +16,7 @@ class BookStruct(Struct, kw_only=True, frozen=True):
 
 
 class CongfigStruct(Struct, kw_only=True, frozen=True):
+    request_per_second: Optional[float] = None
     books: List[BookStruct]
     request_header: Dict[str, str] = field(default_factory=dict)
 
@@ -59,5 +61,7 @@ def main():
             pdf_io = process_img(client, book.id, i)
             merger.append(pdf_io)
             print(f"{book.name} page {i} done")
+            if conf.request_per_second:
+                sleep(1 / conf.request_per_second)
         merger.write(f"output/{book.name}.pdf")
         merger.close()
