@@ -17,15 +17,9 @@ total_page=120
 
 ```py
 request_header={ 
-    "Referer": "Your-Referer", # 这个不加会返回403
-    "Cookie": "Your-Cookie" # 这个不加会返回机器人验证
+    "Referer": "YourReferer", # 这个不加会返回403
+    "Cookie": "YourCookie" # 这个不加会返回机器人验证
 }
-
-...
-
-def main():
-    ...
-    client = httpx.Client(headers=request_header)  # 这边记得加上
 ```
 
 3. 运行如下命令，以激活虚拟环境、执行脚本。文件会下载到当前目录下的 `output` 文件夹中。
