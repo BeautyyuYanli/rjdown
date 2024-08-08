@@ -7,6 +7,11 @@ from msgspec import Struct, convert, toml
 from PIL import Image
 from pypdf import PdfMerger
 
+request_header = {
+    "Referer": "https://book.pep.com.cn/1441001122191/mobile/index.html", # 这个不加会返回403
+    "Cookie": "YOUR_COOKIE" # 这个不加会返回机器人验证
+}
+
 
 class BookStruct(Struct, kw_only=True, frozen=True):
     name: str
@@ -22,7 +27,18 @@ def process_img(client: httpx.Client, id: str, page: int) -> io.BytesIO:
     img_byte = client.get(
         f"https://book.pep.com.cn/{id}/files/mobile/{page}.jpg"
     ).content
-    img = Image.open(io.BytesIO(img_byte))
+
+    if img_byte == b'':  # 处理空白页
+        img = Image.new('RGB', (1274, 1800), (255, 255, 255))
+        print("第"+page+"页为空白！")
+    else:
+        try:
+            img = Image.open(io.BytesIO(img_byte))  # 检查返回的内容是否是图片格式
+        except:
+            print("出错了，响应结果为：")
+            print(img_byte)
+            exit()
+
     pdf_byte = io.BytesIO()
     img.save(pdf_byte, format="pdf")
     pdf_byte.seek(0)
@@ -36,7 +52,7 @@ def main():
     with open(arge.config, "rb") as f:
         conf = convert(toml.decode(f.read()), CongfigStruct)
 
-    client = httpx.Client()
+    client = httpx.Client(headers=request_header)
     for book in conf.books:
         merger = PdfMerger()
         for i in range(1, book.total_page + 1):
